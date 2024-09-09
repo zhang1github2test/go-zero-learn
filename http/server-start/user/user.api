@@ -1,0 +1,18 @@
+syntax = "v1"
+
+type UserReq {
+	Name string `json:"name"`
+	Id   string `json:"id"`
+	Age  int    `json:"age"`
+}
+
+type UserReqResp {
+	UserReq
+	Status string `json:"status"`
+}
+
+service user-api {
+	@handler UserHandler
+	get /user/_query (UserReq) returns (UserReqResp)
+}
+
