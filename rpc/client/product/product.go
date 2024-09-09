@@ -7,7 +7,7 @@ package product
 import (
 	"context"
 
-	"go-zero-learn/rpc/server/pb/user"
+	"go-zero-learn/rpc/client/pb/user"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

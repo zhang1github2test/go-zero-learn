@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package user;
+option go_package="./user";
+
+message UserReq {
+  string id = 1;
+  string name = 2;
+  int32 age = 3;
+
+}
+
+message UserResp {
+  string id = 1;
+  string name = 2;
+  int32 age = 3;
+  string status=4;
+
+}
+
+service User {
+  rpc Create(UserReq) returns(UserResp);
+}
+
+
+message ProductReq {
+  string id = 1;
+  string name = 2;
+  fixed64 price = 3;
+
+}
+
+message ProductResp {
+  string id = 1;
+  string name = 2;
+  fixed64 price = 3;
+  string status=4;
+
+}
+service Product{
+  rpc Create(ProductReq) returns(ProductResp);
+}
