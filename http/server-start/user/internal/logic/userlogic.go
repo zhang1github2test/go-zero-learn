@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
-
+	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"go-zero-learn/http/server-start/user/internal/svc"
 	"go-zero-learn/http/server-start/user/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
+	"time"
 )
 
 type UserLogic struct {
@@ -24,6 +24,9 @@ func NewUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLogic {
 }
 
 func (l *UserLogic) User(req *types.UserReq) (resp *types.UserReqResp, err error) {
+	start := time.Now()
+	time.Sleep(time.Second * 2)
+	fmt.Printf("耗时:%v\n", time.Since(start))
 	// todo: add your logic here and delete this line
 	resp = &types.UserReqResp{
 		UserReq: *req,

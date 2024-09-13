@@ -17,9 +17,9 @@ import (
 const seconds = 5
 
 var (
-	rdx     = flag.String("redis", "localhost:6379", "the redis, default localhost:6379")
-	rdxPass = flag.String("redisPass", "", "the redis password")
+	rdx     = flag.String("redis", "192.168.188.101:6379", "the redis, default localhost:6379")
 	rdxKey  = flag.String("redisKey", "rate", "the redis key, default rate")
+	rdxPass = flag.String("redisPass", "redisPassword", "the redis password")
 	threads = flag.Int("threads", runtime.NumCPU(), "the concurrent threads, default to cores")
 )
 
@@ -28,7 +28,8 @@ func main() {
 
 	store := redis.New(*rdx, redis.WithPass(*rdxPass))
 	fmt.Println(store.Ping())
-	lmt := limit.NewPeriodLimit(seconds, 5, store, *rdxKey)
+	// 实际上只能针对每个
+	lmt := limit.NewPeriodLimit(1, 101, store, *rdxKey)
 	timer := time.NewTimer(time.Second * seconds)
 	quit := make(chan struct{})
 	defer timer.Stop()
@@ -39,10 +40,11 @@ func main() {
 
 	var allowed, denied int32
 	var wait sync.WaitGroup
+	now := time.Now()
 	for i := 0; i < *threads; i++ {
-		i := i
+
 		wait.Add(1)
-		go func() {
+		go func(i int) {
 			for {
 				select {
 				case <-quit:
@@ -58,9 +60,9 @@ func main() {
 					}
 				}
 			}
-		}()
+		}(i)
 	}
 
 	wait.Wait()
-	fmt.Printf("allowed: %d, denied: %d, qps: %d\n", allowed, denied, (allowed+denied)/seconds)
+	fmt.Printf("allowed: %d, denied: %d, qps: %d,time cost:%v\n", allowed, denied, (allowed+denied)/seconds, time.Since(now))
 }

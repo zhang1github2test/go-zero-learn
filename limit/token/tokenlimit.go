@@ -30,9 +30,10 @@ func main() {
 
 	store := redis.New(*rdx, redis.WithPass(*rdxPass))
 	fmt.Println(store.Ping())
-	limit := limit.NewTokenLimiter(rate, burst, store, *rdxKey)
+	limit := limit.NewTokenLimiter(200, 1, store, *rdxKey)
 	timer := time.NewTimer(time.Second * seconds)
 	quit := make(chan struct{})
+	now := time.Now()
 	defer timer.Stop()
 	go func() {
 		<-timer.C
@@ -61,5 +62,5 @@ func main() {
 	}
 
 	wait.Wait()
-	fmt.Printf("allowed: %d, denied: %d, qps: %d\n", allowed, denied, (allowed+denied)/seconds)
+	fmt.Printf("allowed: %d, denied: %d, qps: %dcost:%v\n", allowed, denied, (allowed+denied)/seconds, time.Since(now))
 }

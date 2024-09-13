@@ -1,0 +1,11 @@
+syntax = "v1"
+
+type DownLoadReq {
+	filename string `path:"filename"`
+}
+
+service download-api {
+	@handler downloadHandler
+	get /download/:filename (DownLoadReq)
+}
+

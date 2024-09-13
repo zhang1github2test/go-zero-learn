@@ -1,0 +1,2 @@
+Name: client
+Target: nacos://192.168.188.101:8848/nacos.rpc?timeout=5000s
