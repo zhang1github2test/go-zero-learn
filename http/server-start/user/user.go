@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"runtime"
 
 	"go-zero-learn/http/server-start/user/internal/config"
 	"go-zero-learn/http/server-start/user/internal/handler"
@@ -17,7 +16,7 @@ var configFile = flag.String("f", "etc/user-api.yaml", "the config file")
 
 func main() {
 	flag.Parse()
-	runtime.GOMAXPROCS(8)
+
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
