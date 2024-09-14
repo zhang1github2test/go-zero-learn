@@ -18,7 +18,9 @@ var config = flag.String("f", "etc/consul.yaml", "config file")
 
 func main() {
 	flag.Parse()
-
+	//httpc.Do()
+	//client2 := http.Client{}
+	//client2.Get("http://www.baidu.com")
 	var c zrpc.RpcClientConf
 	conf.MustLoad(*config, &c)
 	client := zrpc.MustNewClient(c)
