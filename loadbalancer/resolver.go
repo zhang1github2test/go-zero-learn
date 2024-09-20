@@ -6,10 +6,6 @@ import (
 	"net/url"
 )
 
-type Builder interface {
-	Build(url string) (Resolver, error)
-	Scheme() string
-}
 type Resolver interface {
 	Next(serviceName string) string
 	Scheme() string
@@ -30,26 +26,32 @@ func Register(r Resolver) {
 	resolvers[r.Scheme()] = r
 }
 
-func ParseUrl(rawUrl string) (string, error) {
+func ParseUrl(rawUrl string) (*url.URL, error) {
 	parsedURL, err := url.Parse(rawUrl)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if parsedURL.Scheme == httpScheme || parsedURL.Scheme == httpsScheme {
-		return "", nil
+		return nil, nil
 	}
 	re := resolvers[parsedURL.Scheme]
 	if re == nil {
-		return "", errors.New(fmt.Sprintf("没有找到对应url的解析器%v", parsedURL.Scheme))
+		return nil, errors.New(fmt.Sprintf("没有找到对应url的解析器%v", parsedURL.Scheme))
 	}
 	if !re.Running() {
 		re.Start()
 	}
+
+	if !re.Running() {
+		return nil, errors.New(fmt.Sprintf("初始化解析器失败%v", parsedURL.Scheme))
+	}
+
 	parsedHost := re.Next(parsedURL.Host)
 	if parsedHost == "" {
-		return "", errors.New("没有找到服务")
+		return nil, errors.New("没有找到服务")
 	}
 	parsedURL.Host = parsedHost
+	parsedURL.Scheme = httpScheme
 
-	return parsedURL.String(), nil
+	return parsedURL, nil
 }
